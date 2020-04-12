@@ -41,6 +41,8 @@ def blog(url):
     file.write('\n'.join(fileNameList))
 
 
+# blog('https://blog.mutoe.com/archives/')
+
 
 def getResponse(url):
     res = requests.get(url)
