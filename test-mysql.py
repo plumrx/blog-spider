@@ -30,7 +30,10 @@ import mysql.connector
 #     print(x)
 
 
-#直接链接数据库，建表
+# 直接链接数据库
+# 建表
+# 插入主键 alert add column
+# 插入数据 insert into
 mydb3 = mysql.connector.connect(
     host='localhost',
     user='root',
@@ -39,8 +42,12 @@ mydb3 = mysql.connector.connect(
 )
 
 mycursor3 = mydb3.cursor()
-mycursor3.execute('CREATE TABLE testdb1(id varchar(10),url varchar(300));')
-
+# mycursor3.execute('CREATE TABLE testdb1(id varchar(10),url varchar(300))')
+# mycursor3.execute("ALTER TABLE testdb1 ADD COLUMN name INT AUTO_INCREMENT PRIMARY KEY")
+sql = 'INSERT INTO blog_spider(blog_name, blog_link, blog_content) VALUES(%s, %s, %s)'
+val = ('test1','http://1','bababab')
+mycursor3.execute(sql, val)
+mydb3.commit()  # 数据表内容有更新
 
 
 
