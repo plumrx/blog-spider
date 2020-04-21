@@ -28,34 +28,56 @@ import mysql.connector
 #
 # for x in mycursor1:
 #     print(x)
-
+# dict->sql
+def dict_to_sql(blog_dict, table_name='posts'):
+    # 将dict转化为可遍历的元组数组
+    dict_entities = [(key, value) for key, value in blog_dict.items()]
+    # 拼接列名
+    column_names = ','.join(dict_entity[0] for dict_entity in dict_entities)
+    column_values = ','.join(repr(dict_entity[1]) for dict_entity in dict_entities)
+    sql = 'INSERT INTO %s (%s) VALUES (%s)' % (table_name, column_names, column_values)
+    return sql
 
 # 直接链接数据库
 # 建表
 # 插入主键 alert add column
 # 插入数据 insert into
-mydb3 = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    passwd='',
-    database='BlogSpider'
-)
+def db_operation(dict_list):
+    connection = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        passwd='',
+        database='BlogSpider'
+    )
 
-mycursor3 = mydb3.cursor()
-# mycursor3.execute('CREATE TABLE testdb1(id varchar(10),url varchar(300))')
-# mycursor3.execute("ALTER TABLE testdb1 ADD COLUMN name INT AUTO_INCREMENT PRIMARY KEY")
-sql = 'INSERT INTO blog_spider(blog_name, blog_link, blog_content) VALUES(%s, %s, %s)'
-val = ('test1','http://1','bababab')
-mycursor3.execute(sql, val)
-mydb3.commit()  # 数据表内容有更新
+    cursor = connection.cursor()
 
-
+    for blog_dict in dict_list:
+        sql = dict_to_sql(blog_dict)
+        cursor.execute(sql)
+    connection.commit()
 
 
+def file_to_dict_list(filename):
+    file = open(filename, 'r')
+    content = file.read()
+    string_list = content.split('\n')
+    dict_list = [eval(string) for string in string_list]
+    return dict_list
 
 
+def main():
+    dict_list = file_to_dict_list('spider-web202004191529.txt')
+    db_operation(dict_list)
 
-
-
+main()
+#
+# cursor = connection.cursor()
+# # mycursor3.execute('CREATE TABLE testdb1(id varchar(10),url varchar(300))')
+# # mycursor3.execute("ALTER TABLE testdb1 ADD COLUMN name INT AUTO_INCREMENT PRIMARY KEY")
+# sql = 'INSERT INTO blog_spider(blog_name, blog_link, blog_content) VALUES(%s, %s, %s)'
+# val = ('test1', 'http://1', 'bababab')
+# cursor.execute(sql, val)
+# connection.commit()  # 数据表内容有更
 
 
